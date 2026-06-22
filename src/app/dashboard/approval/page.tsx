@@ -40,14 +40,14 @@ export default function ApprovalPage() {
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: "flex", gap: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
         {[
           { label: "Menunggu Approval", value: pendingTickets.length, icon: Clock, bg: "#fffbeb", iconColor: "#d97706", border: "#fde68a" },
           { label: "Disetujui Bulan Ini", value: approvedTickets.length, icon: CheckCircle2, bg: "#ecfdf5", iconColor: "#059669", border: "#a7f3d0" },
           { label: "Ditolak Bulan Ini", value: rejectedTickets.length, icon: XCircle, bg: "#fff1f2", iconColor: "#e11d48", border: "#fecdd3" },
           { label: "Total Eskalasi", value: 11, icon: AlertTriangle, bg: "#f5f3ff", iconColor: "#7c3aed", border: "#ddd6fe" },
         ].map((card) => (
-          <div key={card.label} style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 14 }}>
+          <div key={card.label} style={{ flex: "1 1 140px", backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: card.bg, border: `1px solid ${card.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <card.icon style={{ width: 20, height: 20, color: card.iconColor }} />
             </div>

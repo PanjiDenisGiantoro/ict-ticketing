@@ -3,12 +3,22 @@
 import { useState } from "react"
 import { ChevronDown, Upload, X, FileText, AlertCircle, CheckCircle2, Info } from "lucide-react"
 import Link from "next/link"
+import { useBreakpoint } from "@/hooks/use-breakpoint"
 
 const aplikasiList = ["LST_CASE Mobile", "HRIS Web", "E-CLAIM Web", "EMAIL Microsoft 365", "VPN Client", "Portal Internal", "SAP", "Lainnya"]
 const departemenList = ["ICT Ticketing", "Finance", "Operational", "Marketing", "IT Support", "HRD", "Accounting", "Procurement"]
 const kategoriList = ["Login / Autentikasi", "Tampilan / UI Error", "Upload / Download File", "Koneksi / Jaringan", "Data Tidak Tampil", "Email Tidak Terkirim", "Performa Lambat", "Bug / Error Sistem", "Lainnya"]
 
+function parseAplikasi(val: string) {
+  const parts = val.split(" ")
+  const tipe = parts.length > 1 ? parts.slice(1).join(" ") : ""
+  const nama = parts[0]
+  return { nama, tipe }
+}
+
 export default function InputKendalaPage() {
+  const bp = useBreakpoint()
+  const isMobile = bp === "mobile"
   const [form, setForm] = useState({
     aplikasi: "",
     departemen: "",
@@ -21,12 +31,57 @@ export default function InputKendalaPage() {
   const [files, setFiles] = useState<string[]>([])
   const [dragging, setDragging] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [ticketId, setTicketId] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState("")
 
   const handleChange = (field: string, value: string) => setForm((prev) => ({ ...prev, [field]: value }))
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setError("")
+    setSubmitting(true)
+
+    const { nama, tipe } = parseAplikasi(form.aplikasi)
+
+    try {
+      const res = await fetch("/api/kendala", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama_pelapor: "AJ ZARKASIH",
+          departemen: form.departemen,
+          aplikasi: nama,
+          tipe,
+          kategori: form.kategori,
+          prioritas: form.prioritas,
+          judul: form.judul,
+          deskripsi: form.deskripsi,
+          langkah: form.langkah,
+        }),
+      })
+
+      if (!res.ok) {
+        const json = await res.json()
+        throw new Error(json.error || "Gagal submit kendala")
+      }
+
+      const json = await res.json()
+      setTicketId(json.ticket_id)
+      setSubmitted(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const resetForm = () => {
+    setForm({ aplikasi: "", departemen: "", kategori: "", prioritas: "", judul: "", deskripsi: "", langkah: "" })
+    setFiles([])
+    setSubmitted(false)
+    setTicketId("")
+    setError("")
   }
 
   const removeFile = (name: string) => setFiles((prev) => prev.filter((f) => f !== name))
@@ -49,14 +104,14 @@ export default function InputKendalaPage() {
         </div>
         <div style={{ backgroundColor: "#f8fafc", borderRadius: 10, padding: "12px 20px", border: "1px solid #e2e8f0", width: "100%" }}>
           <div style={{ fontSize: 12, color: "#64748b", marginBottom: 4 }}>ID Tiket</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "#2563eb" }}>ICT-2025-00129</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#2563eb" }}>{ticketId}</div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setSubmitted(false)} style={{ padding: "8px 20px", fontSize: 12, fontWeight: 600, color: "#2563eb", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, cursor: "pointer" }}>
+          <button onClick={resetForm} style={{ padding: "8px 20px", fontSize: 12, fontWeight: 600, color: "#2563eb", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, cursor: "pointer" }}>
             Input Kendala Baru
           </button>
-          <Link href="/dashboard/my-ticket" style={{ padding: "8px 20px", fontSize: 12, fontWeight: 600, color: "white", backgroundColor: "#2563eb", border: "none", borderRadius: 8, cursor: "pointer", textDecoration: "none" }}>
-            Lihat My Ticket
+          <Link href="/dashboard/list-kendala" style={{ padding: "8px 20px", fontSize: 12, fontWeight: 600, color: "white", backgroundColor: "#2563eb", border: "none", borderRadius: 8, cursor: "pointer", textDecoration: "none" }}>
+            Lihat List Kendala
           </Link>
         </div>
       </div>
@@ -76,8 +131,14 @@ export default function InputKendalaPage() {
         </Link>
       </div>
 
+      {error && (
+        <div style={{ backgroundColor: "#fff1f2", border: "1px solid #fecdd3", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#be123c" }}>
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
-        <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 16, alignItems: "flex-start" }}>
           {/* Main form */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
 
@@ -312,17 +373,14 @@ export default function InputKendalaPage() {
               <Link href="/dashboard/list-kendala" style={{ padding: "9px 20px", fontSize: 12, fontWeight: 600, color: "#475569", backgroundColor: "white", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer", textDecoration: "none" }}>
                 Batal
               </Link>
-              <button type="button" style={{ padding: "9px 20px", fontSize: 12, fontWeight: 600, color: "#2563eb", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, cursor: "pointer" }}>
-                Simpan Draft
-              </button>
-              <button type="submit" style={{ padding: "9px 20px", fontSize: 12, fontWeight: 600, color: "white", backgroundColor: "#2563eb", border: "none", borderRadius: 8, cursor: "pointer" }}>
-                Submit Kendala
+              <button type="submit" disabled={submitting} style={{ padding: "9px 20px", fontSize: 12, fontWeight: 600, color: "white", backgroundColor: "#2563eb", border: "none", borderRadius: 8, cursor: submitting ? "default" : "pointer", opacity: submitting ? 0.6 : 1 }}>
+                {submitting ? "Mengirim..." : "Submit Kendala"}
               </button>
             </div>
           </div>
 
           {/* Right info panel */}
-          <div style={{ width: 240, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ width: isMobile ? "100%" : 240, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ backgroundColor: "#eff6ff", borderRadius: 12, padding: 16, border: "1px solid #bfdbfe" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
                 <Info style={{ width: 14, height: 14, color: "#2563eb" }} />
@@ -357,8 +415,8 @@ export default function InputKendalaPage() {
                 <h4 style={{ fontSize: 12, fontWeight: 700, color: "#c2410c", margin: 0 }}>Kontak Darurat</h4>
               </div>
               <p style={{ fontSize: 11, color: "#9a3412", margin: "0 0 6px" }}>Untuk kendala kritis, hubungi:</p>
-              <p style={{ fontSize: 11, fontWeight: 600, color: "#7c2d12", margin: 0 }}>📞 Ext. 1234 (ICT Helpdesk)</p>
-              <p style={{ fontSize: 11, fontWeight: 600, color: "#7c2d12", margin: 0 }}>✉️ ict@jne.co.id</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: "#7c2d12", margin: 0 }}>Ext. 1234 (ICT Helpdesk)</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: "#7c2d12", margin: 0 }}>ict@jne.co.id</p>
             </div>
           </div>
         </div>

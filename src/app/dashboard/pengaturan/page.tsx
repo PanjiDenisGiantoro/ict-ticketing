@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { User, Bell, Lock, Eye, EyeOff, Camera, Save } from "lucide-react"
+import { useBreakpoint } from "@/hooks/use-breakpoint"
 
 const sections = [
   { id: "profil", label: "Profil", icon: User },
@@ -41,6 +42,8 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
 }
 
 export default function PengaturanPage() {
+  const bp = useBreakpoint()
+  const isMobile = bp === "mobile"
   const [activeSection, setActiveSection] = useState("profil")
   const [showPassword, setShowPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
@@ -71,9 +74,9 @@ export default function PengaturanPage() {
         <p style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Kelola profil, notifikasi, dan keamanan akun Anda</p>
       </div>
 
-      <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 16, alignItems: "flex-start" }}>
         {/* Left nav */}
-        <div style={{ width: 200, flexShrink: 0, backgroundColor: "white", borderRadius: 12, padding: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+        <div style={{ width: isMobile ? "100%" : 200, flexShrink: 0, backgroundColor: "white", borderRadius: 12, padding: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
           {sections.map((s) => (
             <button
               key={s.id}

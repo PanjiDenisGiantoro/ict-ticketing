@@ -2,7 +2,7 @@
 
 import { Menu, Bell, HelpCircle, Search } from "lucide-react"
 
-export function DashboardHeader() {
+export function DashboardHeader({ onMenuClick, isMobile }: { onMenuClick?: () => void; isMobile?: boolean }) {
   return (
     <header
       style={{
@@ -18,6 +18,7 @@ export function DashboardHeader() {
       }}
     >
       <button
+        onClick={onMenuClick}
         style={{
           padding: 6,
           borderRadius: 6,
@@ -32,11 +33,13 @@ export function DashboardHeader() {
         <Menu style={{ width: 20, height: 20 }} />
       </button>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <span style={{ color: "#94a3b8", fontSize: 13, fontWeight: 500 }}>Power Apps</span>
-        <span style={{ color: "#cbd5e1" }}>|</span>
-        <span style={{ color: "#334155", fontSize: 13, fontWeight: 700 }}>LST_CASE Mobile</span>
-      </div>
+      {!isMobile && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ color: "#94a3b8", fontSize: 13, fontWeight: 500 }}>Power Apps</span>
+          <span style={{ color: "#cbd5e1" }}>|</span>
+          <span style={{ color: "#334155", fontSize: 13, fontWeight: 700 }}>LST_CASE Mobile</span>
+        </div>
+      )}
 
       <div style={{ flex: 1, maxWidth: 360, position: "relative" }}>
         <Search

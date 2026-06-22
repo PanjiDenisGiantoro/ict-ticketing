@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   LayoutDashboard,
   List,
@@ -53,21 +53,34 @@ const navigation: NavItem[] = [
     name: "Master Data",
     icon: Database,
     children: [
-      { name: "Aplikasi", href: "/dashboard/master-data" },
-      { name: "Departemen", href: "/dashboard/master-data/departemen" },
-      { name: "Kategori", href: "/dashboard/master-data/kategori" },
+      { name: "Aplikasi", href: "/dashboard/master-data?tab=aplikasi" },
+      { name: "Departemen", href: "/dashboard/master-data?tab=departemen" },
+      { name: "Kategori", href: "/dashboard/master-data?tab=kategori" },
     ],
   },
   { name: "Pengaturan", href: "/dashboard/pengaturan", icon: Settings },
   { name: "Bantuan", href: "/dashboard/bantuan", icon: HelpCircle },
 ]
 
-export function Sidebar() {
+export function Sidebar({ onClose }: { onClose?: () => void }) {
+  return (
+    <Suspense>
+      <SidebarContent onClose={onClose} />
+    </Suspense>
+  )
+}
+
+function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const fullPath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "")
+
   const [expanded, setExpanded] = useState<string[]>(() => {
-    // auto-expand parent if current path matches a child
     return navigation
-      .filter((item) => item.children?.some((c) => pathname.startsWith(c.href)))
+      .filter((item) => item.children?.some((c) => {
+        const [cPath] = c.href.split("?")
+        return pathname.startsWith(cPath)
+      }))
       .map((item) => item.name)
   })
 
@@ -78,7 +91,10 @@ export function Sidebar() {
   }
 
   const isChildActive = (item: NavItem) =>
-    item.children?.some((c) => pathname === c.href || pathname.startsWith(c.href + "/")) ?? false
+    item.children?.some((c) => {
+      if (c.href.includes("?")) return fullPath === c.href
+      return pathname === c.href || pathname.startsWith(c.href + "/")
+    }) ?? false
 
   return (
     <div
@@ -176,11 +192,14 @@ export function Sidebar() {
                 {isOpen && (
                   <div style={{ backgroundColor: "rgba(0,0,0,0.2)" }}>
                     {item.children!.map((child) => {
-                      const childActive = pathname === child.href || pathname.startsWith(child.href + "/")
+                      const childActive = child.href.includes("?")
+                        ? fullPath === child.href
+                        : pathname === child.href || pathname.startsWith(child.href + "/")
                       return (
                         <Link
                           key={child.href}
                           href={child.href}
+                          onClick={() => onClose?.()}
                           style={{
                             display: "block",
                             padding: "7px 12px 7px 32px",
@@ -205,6 +224,7 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href!}
+              onClick={() => onClose?.()}
               style={{
                 display: "flex",
                 alignItems: "center",

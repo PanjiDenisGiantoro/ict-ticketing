@@ -53,9 +53,9 @@ export default function MyTicketPage() {
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: "flex", gap: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
         {statCards.map((card) => (
-          <div key={card.label} style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 14 }}>
+          <div key={card.label} style={{ flex: "1 1 140px", backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: card.bg, border: `1px solid ${card.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <card.icon style={{ width: 20, height: 20, color: card.iconColor }} />
             </div>

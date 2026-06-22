@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, Phone, Mail, MessageSquare, BookOpen, Video, ExternalLink, Search, Send } from "lucide-react"
+import { useBreakpoint } from "@/hooks/use-breakpoint"
 
 const faqs = [
   { q: "Bagaimana cara membuat tiket kendala baru?", a: "Klik menu 'Input Kendala' di sidebar kiri, kemudian isi form yang tersedia meliputi aplikasi yang bermasalah, kategori kendala, prioritas, dan deskripsi detail. Upload screenshot jika diperlukan, lalu klik 'Submit Kendala'." },
@@ -21,6 +22,8 @@ const quickLinks = [
 ]
 
 export default function BantuanPage() {
+  const bp = useBreakpoint()
+  const isMobile = bp === "mobile"
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [searchFaq, setSearchFaq] = useState("")
   const [message, setMessage] = useState("")
@@ -44,11 +47,11 @@ export default function BantuanPage() {
         <p style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Panduan penggunaan dan kontak dukungan ICT</p>
       </div>
 
-      <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 16, alignItems: "flex-start" }}>
         {/* Left: FAQ */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Quick links */}
-          <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
             {quickLinks.map((link) => (
               <div key={link.title} style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", cursor: "pointer', display: 'flex", display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: link.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -114,7 +117,7 @@ export default function BantuanPage() {
         </div>
 
         {/* Right: contact */}
-        <div style={{ width: 260, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ width: isMobile ? "100%" : 260, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
           {/* Contact info */}
           <div style={{ backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
             <h3 style={{ fontSize: 13, fontWeight: 700, color: "#374151", margin: "0 0 14px" }}>Kontak ICT Helpdesk</h3>

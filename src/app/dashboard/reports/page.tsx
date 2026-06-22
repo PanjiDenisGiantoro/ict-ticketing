@@ -73,9 +73,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Summary cards */}
-      <div style={{ display: "flex", gap: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
         {summaryCards.map((card) => (
-          <div key={card.label} style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+          <div key={card.label} style={{ flex: "1 1 180px", backgroundColor: "white", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
             <p style={{ fontSize: 11, color: "#64748b", margin: "0 0 8px" }}>{card.label}</p>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#1e293b", margin: "0 0 6px" }}>{card.value}</p>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -117,9 +117,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Row of 3 charts */}
-      <div style={{ display: "flex", gap: 16 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
         {/* By Aplikasi */}
-        <div style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+        <div style={{ flex: "1 1 260px", backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
           <h3 style={{ fontSize: 13, fontWeight: 700, color: "#374151", margin: "0 0 16px" }}>Kendala Per Aplikasi</h3>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={byAplikasi} layout="vertical" margin={{ left: 0, right: 20 }}>
@@ -135,7 +135,7 @@ export default function ReportsPage() {
         </div>
 
         {/* By Prioritas */}
-        <div style={{ width: 220, backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+        <div style={{ flex: "1 1 200px", backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
           <h3 style={{ fontSize: 13, fontWeight: 700, color: "#374151", margin: "0 0 8px" }}>Per Prioritas</h3>
           <ResponsiveContainer width="100%" height={150}>
             <PieChart>
@@ -159,7 +159,7 @@ export default function ReportsPage() {
         </div>
 
         {/* By Departemen */}
-        <div style={{ flex: 1, backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+        <div style={{ flex: "1 1 260px", backgroundColor: "white", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
           <h3 style={{ fontSize: 13, fontWeight: 700, color: "#374151", margin: "0 0 16px" }}>Kendala Per Departemen</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {byDept.map((d, i) => (
